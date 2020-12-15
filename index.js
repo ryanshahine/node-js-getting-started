@@ -1,10 +1,19 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+const http = require('http');
+const server = http.createServer();
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+server.on('request', (request, response) => {
+    let body = [];
+    request.on('data', (chunk) => {
+        body.push(chunk);
+    }).on('end', () => {
+        body = Buffer.concat(body).toString();
+
+	console.log(`==== ${request.method} ${request.url}`);
+	console.log('> Headers');
+        console.log(request.headers);
+
+	console.log('> Body');
+	console.log(body);
+        response.end();
+    });
+}).listen(8083);
